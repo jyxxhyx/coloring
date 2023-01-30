@@ -42,10 +42,7 @@ class AssignModel(ColoringModel):
         return
 
     def _optimize(self):
-        self.m.Params.mip_gap = self.config['mip_gap']
-        self.m.Params.time_limit = self.config['time_limit']
-        self.m.write(f'{self.name}.lp')
-        self.m.optimize()
+        super()._optimize()
         return
 
     def _post_process(self):

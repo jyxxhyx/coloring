@@ -16,9 +16,8 @@ def main():
         models = {'assign': assign.AssignModel, 'pop': pop.PopModel, 'poph': poph.PophModel}
 
         for name, Model in models.items():
-            config['model_name'] = name
+            config['model_name'] = f'{name}_{input_file}'
             output_name = f'{name}_{output_file}'
-            # TODO Use a heuristic (e.g, random coloring) to get a better upper bound.
             model = Model(graph, config, upper_bound=upper_bound)
             result = model.solve()
             write_result(add_output_cwd(output_name), result)

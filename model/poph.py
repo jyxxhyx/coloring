@@ -7,7 +7,8 @@ class PophModel(ColoringModel):
     def __init__(self, graph, config, upper_bound=None):
         super().__init__(graph, config, upper_bound)
         # TODO Choose the q node in a smart way.
-        self.q_node = self.nodes[0]
+        # self.q_node = self.nodes[0]
+        self.q_node = self.graph.get_node_with_max_degree()
         self.largest_color = self.upper_bound - 1
         return
 
@@ -62,10 +63,7 @@ class PophModel(ColoringModel):
         return
 
     def _optimize(self):
-        self.m.Params.mip_gap = self.config['mip_gap']
-        self.m.Params.time_limit = self.config['time_limit']
-        self.m.write(f'{self.name}.lp')
-        self.m.optimize()
+        super()._optimize()
         return
 
     def _post_process(self):

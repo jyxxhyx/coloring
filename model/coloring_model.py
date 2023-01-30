@@ -31,6 +31,12 @@ class ColoringModel(AbstractModel):
         return
 
     def _optimize(self):
+        # Print the name of the model in the log for further analysis.
+        self.m.message('')
+        self.m.message(self.name)
+        self.m.Params.mip_gap = self.config['mip_gap']
+        self.m.Params.time_limit = self.config['time_limit']
+        self.m.optimize()
         return
 
     def _is_feasible(self):

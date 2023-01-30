@@ -4,6 +4,9 @@ import networkx as nx
 class Graph(object):
     def __init__(self):
         self.g = nx.Graph()
+        # Precompute and store the node with max degree
+        self._max_degree_node = None
+        self.get_node_with_max_degree()
         return
 
     def add_nodes(self, node_list: list):
@@ -33,6 +36,21 @@ class Graph(object):
 
     def get_edges(self) -> list:
         return list(self.g.edges)
+
+    def get_node_with_max_degree(self):
+        if self._max_degree_node is None:
+            self._max_degree_node = self._get_node_with_max_degree()
+        return self._max_degree_node
+
+    def _get_node_with_max_degree(self):
+        max_degree = 0
+        max_node = None
+        for node in self.get_nodes():
+            degree = self.g.degree[node]
+            if degree > max_degree:
+                max_node = node
+                max_degree = degree
+        return max_node
 
 
 def _flip_edge(u, v):
