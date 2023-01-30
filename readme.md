@@ -10,12 +10,18 @@ All models are the strengthened versions, along with some the preprocessing tric
 
 Run the `main.py` in the root directory. It will read instances defined in `config_local.yaml` (downloaded from https://mat.tepper.cmu.edu/COLOR/instances.html, standard graph coloring instances) and solve them via the Assign, POP, POPH models.
 
+## Dependencies
+
+This project depends on the [Gurobi solver](https://gurobi.com/) and [Networkx](https://networkx.org/) package.
+
 ## TODO List
 
 - Implement a max clique heuristic to find the initial lower bound of a graph (and maybe add an associated constraint into the models).
 
 - Automatically analyze the Gurobi logs (via implementing a parser manually or using the official package `
-grblogtools`) and output the stat file.
+grblogtools`) and output the stat file. 
+  - Bad news, `grblogtools` is not compatible with Anaconda Python 3.6 (as I have to use Gurobi 8.0.1).
+  - Maybe I can copy some source code from `grblogtools`.
 
 - Restructure and refactor.
 
