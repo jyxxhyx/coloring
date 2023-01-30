@@ -1,0 +1,84 @@
+from gurobipy import Model, quicksum, GRB
+
+from model.coloring_model import ColoringModel
+
+
+class PophModel(ColoringModel):
+    def __init__(self, graph, config, upper_bound=None):
+        super().__init__(graph, config, upper_bound)
+        # TODO Choose the q node in a smart way.
+        self.q_node = self.nodes[0]
+        self.largest_color = self.upper_bound - 1
+        return
+
+    def _set_iterables(self):
+        super()._set_iterables()
+        return
+
+    def _set_variables(self):
+        self.x = self.m.addVars(self.nodes,
+                                self.cap_h,
+                                vtype=GRB.BINARY,
+                                name='x')
+        self.g = self.m.addVars(self.nodes,
+                                self.cap_h,
+                                vtype=GRB.BINARY,
+                                name='g')
+        return
+
+    def _set_objective(self):
+        self.m.setObjective(
+            quicksum(self.g[self.q_node, i] for i in self.cap_h) + 1)
+        return
+
+    def _set_constraints(self):
+        self.m.addConstrs((self.g[v, self.largest_color] == 0
+                           for v in self.nodes),
+                          name='fix-some-g')
+        self.m.addConstrs(
+            (self.x[v, 0] == 1 - self.g[v, 0] for v in self.nodes),
+            name='linking1')
+        self.m.addConstrs((self.x[v, i] == self.g[v, i - 1] - self.g[v, i]
+                           for v in self.nodes
+                           for i in self.cap_h if i >= 1),
+                          name='linking2')
+        self.m.addConstrs(
+            (self.x[u, 0] + self.x[v, 0] <= self.g[self.q_node, 0]
+             for (u, v) in self.edges),
+            name='edge1')
+        self.m.addConstrs(
+            (self.x[u, i] + self.x[v, i] <= self.g[self.q_node, i - 1]
+             for (u, v) in self.edges
+             for i in self.cap_h if i >= 1),
+            name='edge2')
+        self.m.addConstrs((self.g[self.q_node, i] - self.g[v, i] >= 0
+                           for v in self.nodes
+                           for i in self.cap_h),
+                          name='upper_bound')
+        self.m.addConstrs((self.g[self.q_node, i + 1] - self.g[v, i] >= 0
+                           for v in self.graph.get_neighborhood(self.q_node)
+                           for i in self.cap_h if i < self.largest_color),
+                          name='strengthen')
+        return
+
+    def _optimize(self):
+        self.m.Params.mip_gap = self.config['mip_gap']
+        self.m.Params.time_limit = self.config['time_limit']
+        self.m.write(f'{self.name}.lp')
+        self.m.optimize()
+        return
+
+    def _post_process(self):
+        result = dict()
+        for node in self.graph.get_nodes():
+            for i in self.cap_h:
+                if self.x[node, i].x > 0.9:
+                    result[node] = i
+                    break
+        return result
+
+    def _is_feasible(self):
+        return True
+
+    def _process_infeasible_case(self):
+        return dict()
