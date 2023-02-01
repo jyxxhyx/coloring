@@ -27,27 +27,45 @@ class Analyzer(object):
 
             gap, lb, ub = self._get_obj_info(text)
             total_time = self._get_total_time(text)
-            presolve_time = self._get_presolve_time(text)
             root_node_time = self._get_root_node(text)
             initial_columns, initial_rows = self._get_initial_size(text)
-            presolved_columns, presolved_rows = self._get_presolved_size(text)
+            presolve_time, presolved_columns, presolved_rows = self._get_presolve_info(text)
 
             self._add_record(instance, model, total_time, ub, lb, gap, presolve_time, root_node_time, initial_rows,
                              initial_columns, presolved_rows, presolved_columns)
         return
 
-    def _get_presolved_size(self, text):
-        presolved_prob_pattern = r'Presolved: (\d+) rows, (\d+) columns, (\d+) nonzeros'
+    def _get_presolve_info(self, text):
+        """
+        Get presolve related information.
+        Note that there is an error in gurobi log.
+        See the example below, the numbers of the rows and columns on the last line should be exchanged.
+        ---
+        Presolve time: 47.68s
+        Presolved: 517637 rows, 18157 columns, 1581126 nonzeros
+        Variable types: 0 continuous, 18157 integer (18157 binary)
+        Found heuristic solution: objective 33.0000000
+
+        Deterministic concurrent LP optimizer: primal and dual simplex
+        Showing first log only...
+
+        Presolved: 18157 rows, 535794 columns, 1599283 nonzeros
+        ---
+        :param text:
+        :return:
+        """
+        presolved_prob_pattern = r'Presolve time: (\d+\.\d+)s\n,Presolved: (\d+) rows, (\d+) columns, (\d+) nonzeros'
         m = re.findall(presolved_prob_pattern, text)[-1]
-        presolved_rows = m[0]
-        presolved_columns = m[1]
-        return presolved_columns, presolved_rows
+        presolve_time = float(m[0])
+        presolved_rows = int(m[1])
+        presolved_columns = int(m[2])
+        return presolve_time, presolved_columns, presolved_rows
 
     def _get_initial_size(self, text):
         initial_prob_pattern = r'Optimize a model with (\d+) rows, (\d+) columns and (\d+) nonzeros'
         m = re.findall(initial_prob_pattern, text)[-1]
-        initial_rows = m[0]
-        initial_columns = m[1]
+        initial_rows = int(m[0])
+        initial_columns = int(m[1])
         return initial_columns, initial_rows
 
     def _get_root_node(self, text):
@@ -57,16 +75,10 @@ class Analyzer(object):
             m = m[-1]
             lp_obj = m[0]
             simplex_iter = m[1]
-            root_node_time = m[2]
+            root_node_time = float(m[2])
             return root_node_time
         else:
             return None
-
-    def _get_presolve_time(self, text):
-        presolve_time_pattern = r'Presolve time: (\d+\.\d+)(s)'
-        m = re.findall(presolve_time_pattern, text)[-1]
-        presolve_time = m[0]
-        return presolve_time
 
     def _get_total_time(self, text):
         time_pattern = r'Explored (\d+) nodes \((\d+) simplex iterations\) in (\d+\.\d+) seconds'
@@ -75,16 +87,16 @@ class Analyzer(object):
             m = m[-1]
             bb_nodes = m[0]
             simplex_iter = m[1]
-            total_time = m[2]
+            total_time = float(m[2])
             return total_time
         return None
 
     def _get_obj_info(self, text):
         obj_pattern = r'Best objective (\d+\.\d+e\+\d+), best bound (\d+\.\d+e\+\d+), gap (\d+\.\d+)\%'
         m = re.findall(obj_pattern, text)[-1]
-        ub = m[0]
-        lb = m[1]
-        gap = m[2]
+        ub = float(m[0])
+        lb = float(m[1])
+        gap = float(m[2])
         return gap, lb, ub
 
     def _add_record(self, instance, model, total_time, ub, lb, gap, presolve_time, root_node_time, initial_rows,

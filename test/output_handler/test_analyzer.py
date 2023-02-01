@@ -6,18 +6,22 @@ from util.util import add_logs_cwd
 
 
 class TestAnalyzer(TestCase):
+    def setUp(self):
+        self.analyzer = Analyzer()
+        return
+
     def test_parse_log(self):
-        analyzer = Analyzer()
         log_file = 'poph_games120.col.log'
         key = 'poph_games120'
-        analyzer.parse_log(add_logs_cwd(log_file), key)
-        print(analyzer.result)
+        self.analyzer.parse_log(add_logs_cwd(log_file), key)
+        print(self.analyzer.result)
+        self.assertEqual(self.analyzer.result['Presolved rows'][0], 2386)
+        self.assertEqual(self.analyzer.result['Presolved columns'][0], 1178)
 
-    def test__get_presolve_time(self):
-        analyzer = Analyzer()
-        text = 'Presolve time: 0.23s'
-        presolve_time = analyzer._get_presolve_time(text)
-        print(presolve_time)
+    def test__get_presolve_info(self):
+        text = 'Presolve time: 47.68s\n,Presolved: 517637 rows, 18157 columns, 1581126 nonzeros'
+        result = self.analyzer._get_presolve_info(text)
+        print(result)
 
     def test_re(self):
         text = 'Best objective 9.000000000000e+00, best bound 9.000000000000e+00, gap 0.0000%, Best objective ' \
