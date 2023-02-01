@@ -7,16 +7,28 @@ from util.util import add_logs_cwd
 
 class TestAnalyzer(TestCase):
     def setUp(self):
+        """
+        The fixture equivalent in unittest package
+        :return:
+        """
         self.analyzer = Analyzer()
         return
 
     def test_parse_log(self):
-        log_file = 'poph_games120.col.log'
+        log_file = 'test.log.test'
         key = 'poph_games120'
         self.analyzer.parse_log(add_logs_cwd(log_file), key)
         print(self.analyzer.result)
         self.assertEqual(self.analyzer.result['Presolved rows'][0], 2386)
         self.assertEqual(self.analyzer.result['Presolved columns'][0], 1178)
+        self.assertEqual(self.analyzer.result['Initial rows'][0], 9018)
+        self.assertEqual(self.analyzer.result['Initial columns'][0], 2400)
+        self.assertAlmostEqual(self.analyzer.result['Time'][0], 0.14)
+        self.assertAlmostEqual(self.analyzer.result['UB'][0], 9.0)
+        self.assertAlmostEqual(self.analyzer.result['LB'][0], 9.0)
+        self.assertAlmostEqual(self.analyzer.result['Gap'][0], 0.0)
+        self.assertAlmostEqual(self.analyzer.result['Presolve time'][0], 0.11)
+        self.assertAlmostEqual(self.analyzer.result['Root node time'][0], 0.01)
 
     def test__get_presolve_info(self):
         text = 'Presolve time: 47.68s\n,Presolved: 517637 rows, 18157 columns, 1581126 nonzeros'
