@@ -4,8 +4,8 @@ from model.coloring_model import ColoringModel
 
 
 class PophModel(ColoringModel):
-    def __init__(self, graph, config, upper_bound=None):
-        super().__init__(graph, config, upper_bound)
+    def __init__(self, graph, config, upper_bound=None, lower_bound=None):
+        super().__init__(graph, config, upper_bound, lower_bound)
         # TODO Choose the q node in a smart way.
         # self.q_node = self.nodes[0]
         self.q_node = self.graph.get_node_with_max_degree()
@@ -60,6 +60,9 @@ class PophModel(ColoringModel):
                            for v in self.graph.get_neighborhood(self.q_node)
                            for i in self.cap_h if i < self.largest_color),
                           name='strengthen')
+        if self.lower_bound:
+            self.m.addConstr(lhs=quicksum(self.g[self.q_node, i] for i in self.cap_h) + 1, sense=GRB.GREATER_EQUAL,
+                             rhs=self.lower_bound, name='lb')
         return
 
     def _optimize(self):

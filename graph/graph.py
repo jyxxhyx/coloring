@@ -1,4 +1,5 @@
 import networkx as nx
+from networkx import graph_clique_number
 
 
 class Graph(object):
@@ -51,6 +52,15 @@ class Graph(object):
                 max_node = node
                 max_degree = degree
         return max_node
+
+    def has_edge(self, node1, node2):
+        return self.g.has_edge(node1, node2)
+
+    def degree(self, node):
+        return self.g.degree[node]
+
+    def max_clique(self):
+        return graph_clique_number(self.g)
 
 
 def _flip_edge(u, v):

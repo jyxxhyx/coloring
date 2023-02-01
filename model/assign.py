@@ -4,8 +4,8 @@ from model.coloring_model import ColoringModel
 
 
 class AssignModel(ColoringModel):
-    def __init__(self, graph, config, upper_bound=None):
-        super().__init__(graph, config, upper_bound)
+    def __init__(self, graph, config, upper_bound=None, lower_bound=None):
+        super().__init__(graph, config, upper_bound, lower_bound)
         return
 
     def _set_iterables(self):
@@ -39,6 +39,9 @@ class AssignModel(ColoringModel):
         self.m.addConstrs(
             (self.w[i] <= self.w[i - 1] for i in self.cap_h if i >= 1),
             name='symmetry-breaking')
+        if self.lower_bound:
+            self.m.addConstr(lhs=quicksum(self.w[i] for i in self.cap_h), sense=GRB.GREATER_EQUAL,
+                             rhs=self.lower_bound, name='lb')
         return
 
     def _optimize(self):
