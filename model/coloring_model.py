@@ -2,6 +2,7 @@
 from gurobipy import Model
 
 from model.abstract_model import AbstractModel
+from util.util import add_logs_cwd
 
 
 class ColoringModel(AbstractModel):
@@ -36,6 +37,7 @@ class ColoringModel(AbstractModel):
 
     def _optimize(self):
         # Print the name of the model in the log for further analysis.
+        self.m.Params.log_file = f'{add_logs_cwd(self.name)}.log'
         self.m.message('')
         self.m.message(self.name)
         self.m.Params.mip_gap = self.config['mip_gap']

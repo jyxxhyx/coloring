@@ -11,3 +11,9 @@ def add_output_cwd(file_name):
     path = os.path.dirname(__file__)
     parent_path = os.path.dirname(path)
     return os.path.join(parent_path, 'data', 'output', file_name)
+
+
+def add_logs_cwd(file_name):
+    path = os.path.dirname(__file__)
+    parent_path = os.path.dirname(path)
+    return os.path.join(parent_path, 'data', 'logs', file_name)
