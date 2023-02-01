@@ -16,12 +16,14 @@ This project depends on the [Gurobi solver](https://gurobi.com/) and [Networkx](
 
 ## TODO List
 
-- Implement a max clique heuristic to find the initial lower bound of a graph (and maybe add an associated constraint into the models).
+- [X] Implement a max clique heuristic to find the initial lower bound of a graph (and maybe add an associated constraint into the models).
 
-- Automatically analyze the Gurobi logs (via implementing a parser manually or using the official package `
-grblogtools`) and output the stat file. 
-  - Bad news, `grblogtools` is not compatible with Anaconda Python 3.6 (as I have to use Gurobi 8.0.1).
-  - Maybe I can copy some source code from `grblogtools`.
+- [X] Automatically analyze the Gurobi logs (via implementing a parser) and output the stat file. The official package `
+grblogtools` is not available for Anaconda Python 3.6.
+
+- Use the initial solution of the heuristic coloring method as a warm start of MILP models.
+
+- Avoid defining redundant variables (i.e., g_{v, H}) in the POP and POPH models.
 
 - Restructure and refactor.
 
