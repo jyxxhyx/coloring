@@ -1,0 +1,13 @@
+is_ub_added: True
+# 'exact' will call the exact method,
+# 'greedy' wil call the greedy method, otherwise no lb info is returned.
+is_lb_added: 'exact'
+
+model_name: 'coloring'
+mip_gap: 0
+time_limit: 1800
+
+input_files: [ 'miles1000.col', 'miles1500.col', 'fpsol2.i.1.col', 'fpsol2.i.2.col', 'fpsol2.i.3.col', 'inithx.i.1.col',
+               'inithx.i.2.col', 'inithx.i.3.col', 'myciel3.col', 'myciel4.col', 'myciel5.col', 'myciel6.col',
+               'myciel7.col', 'le450_15b.col', 'le450_15c.col', 'le450_15d.col', 'zeroin.i.1.col', 'zeroin.i.2.col',
+               'zeroin.i.3.col' ]

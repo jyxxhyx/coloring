@@ -7,14 +7,14 @@ from config_env import get_configuration
 
 
 def main():
-    config = get_configuration('config_local_large.yaml')
+    config = get_configuration('config_large.yaml')
     analyzer = Analyzer()
     # Solve multiple instances
-    for input_file, output_file in zip(config['input_files'], config['output_files']):
+    for input_file in config['input_files']:
+        output_file = input_file.replace('.col', '.sol')
         graph = read_graph_from_file(add_input_cwd(input_file))
-        # lower_bound, _ = heuristics.find_clique(graph)
-        lower_bound = graph.max_clique()
-        upper_bound = heuristics.random_coloring(graph)
+        lower_bound = _get_lower_bound(graph, config['is_lb_added'])
+        upper_bound = _get_upper_bound(graph, config['is_ub_added'])
         print(f'{input_file}: {upper_bound}, {lower_bound}')
         models = {'assign': assign.AssignModel, 'pop': pop.PopModel, 'poph': poph.PophModel}
 
@@ -28,6 +28,23 @@ def main():
             analyzer.parse_log(add_logs_cwd(f'{instance_key}.log'), instance_key)
     analyzer.write_summary()
     return
+
+
+def _get_lower_bound(graph, lb_config):
+    if lb_config == 'exact':
+        return graph.max_clique()
+    elif lb_config == 'greedy':
+        lower_bound, _ = heuristics.find_clique(graph)
+        return lower_bound
+    else:
+        return None
+
+
+def _get_upper_bound(graph, ub_config):
+    if ub_config is True:
+        return heuristics.random_coloring(graph)
+    else:
+        return None
 
 
 if __name__ == '__main__':
