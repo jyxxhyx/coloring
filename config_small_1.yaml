@@ -1,0 +1,11 @@
+is_ub_added: True
+# 'exact' will call the exact method,
+# 'greedy' wil call the greedy method, otherwise no lb info is returned.
+is_lb_added: 'exact'
+
+# Will be changed in the calculation.
+model_name: 'coloring'
+mip_gap: 0
+time_limit: 600
+
+input_files: ['jean.col', 'anna.col', 'david.col', 'huck.col', 'games120.col']

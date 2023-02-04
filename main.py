@@ -18,14 +18,14 @@ def main():
         print(f'{input_file}: {upper_bound}, {lower_bound}')
         models = {'assign': assign.AssignModel, 'pop': pop.PopModel, 'poph': poph.PophModel}
 
-        for name, Model in models.items():
-            instance_key = f'{name}_{input_file}'
+        for model_name, Model in models.items():
+            instance_key = f'{model_name}_{input_file}'
             config['model_name'] = instance_key
-            output_name = f'{name}_{output_file}'
+            output_name = f'{model_name}_{output_file}'
             model = Model(graph, config, upper_bound=upper_bound, lower_bound=lower_bound)
             result = model.solve()
             write_result(add_output_cwd(output_name), result)
-            analyzer.parse_log(add_logs_cwd(f'{instance_key}.log'), instance_key)
+            analyzer.parse_log(add_logs_cwd(f'{instance_key}.log'), model=model_name, instance=input_file)
     analyzer.write_summary()
     return
 

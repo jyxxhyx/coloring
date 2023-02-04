@@ -12,15 +12,15 @@ class Analyzer(object):
         self.result = {column: list() for column in columns}
         return
 
-    def parse_log(self, log_name: str, key: str):
+    def parse_log(self, log_name: str, model: str, instance: str, is_iteration_parsed: bool = False):
         """
         Analyze a gurobi log and get some key indicators.
-        :param log_name:
-        :param key:
+        :param log_name: path of the log
+        :param model: the associated model name
+        :param instance: the associated instance name
+        :param is_iteration_parsed: whether to parse the iteration info (if it exists)
         :return:
         """
-        model = key.split('_')[0]
-        instance = key.split('_')[1]
         with open(log_name, mode='r', encoding='utf-8') as f:
             text = f.readlines()
             text = ','.join(text)
@@ -30,6 +30,8 @@ class Analyzer(object):
             root_node_time = self._get_root_node(text)
             initial_columns, initial_rows = self._get_initial_size(text)
             presolve_time, presolved_columns, presolved_rows = self._get_presolve_info(text)
+            if is_iteration_parsed:
+                df_iteration = self._get_iteration_info(text)
 
             self._add_record(instance, model, total_time, ub, lb, gap, presolve_time, root_node_time, initial_rows,
                              initial_columns, presolved_rows, presolved_columns)
@@ -98,6 +100,10 @@ class Analyzer(object):
         lb = float(m[1])
         gap = float(m[2])
         return gap, lb, ub
+
+    def _get_iteration_info(self, text):
+        # TODO
+        return None
 
     def _add_record(self, instance, model, total_time, ub, lb, gap, presolve_time, root_node_time, initial_rows,
                     initial_columns, presolved_rows, presolved_columns):
