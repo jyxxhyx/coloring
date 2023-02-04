@@ -16,8 +16,9 @@ class TestAnalyzer(TestCase):
 
     def test_parse_log(self):
         log_file = 'test.log.test'
-        key = 'poph_games120'
-        self.analyzer.parse_log(add_logs_cwd(log_file), key)
+        model = 'poph'
+        instance = 'game120'
+        self.analyzer.parse_log(add_logs_cwd(log_file), model, instance)
         print(self.analyzer.result)
         self.assertEqual(self.analyzer.result['Presolved rows'][0], 2386)
         self.assertEqual(self.analyzer.result['Presolved columns'][0], 1178)
@@ -44,3 +45,10 @@ class TestAnalyzer(TestCase):
         lb = m[1]
         gap = m[2]
         print(f'{ub},{lb},{gap}')
+
+    def test__get_iteration_info(self):
+        text = ' Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time\n,\n,' \
+               'H    0     0                       9.0000000    9.00000  0.00%     -    0s\n,' \
+               '     0     0    9.00000    0  155    9.00000    9.00000  0.00%     -    0s\n,'
+        result = self.analyzer._get_iteration_info(text)
+        print(result)

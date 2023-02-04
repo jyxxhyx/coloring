@@ -1,8 +1,13 @@
 import re
+from typing import Optional
 
 import pandas as pd
 
-from util.util import add_output_cwd
+from output_handler.plot import draw_iteration
+from output_handler.regex_util import typeconvert_groupdict
+from util.util import add_output_cwd, add_fig_cwd
+
+float_pattern = r"[-+]?((\d*\.\d+)|(\d+\.?))([Ee][+-]?\d+)?"
 
 
 class Analyzer(object):
@@ -32,6 +37,7 @@ class Analyzer(object):
             presolve_time, presolved_columns, presolved_rows = self._get_presolve_info(text)
             if is_iteration_parsed:
                 df_iteration = self._get_iteration_info(text)
+                draw_iteration(df_iteration, file_name=add_fig_cwd(f'{model}_{instance}.jpg'))
 
             self._add_record(instance, model, total_time, ub, lb, gap, presolve_time, root_node_time, initial_rows,
                              initial_columns, presolved_rows, presolved_columns)
@@ -101,9 +107,54 @@ class Analyzer(object):
         gap = float(m[2])
         return gap, lb, ub
 
-    def _get_iteration_info(self, text):
-        # TODO
-        return None
+    def _get_iteration_info(self, text) -> Optional[pd.DataFrame]:
+        # TODO get the final result
+        progress = list()
+        line_types = [
+            # tree_search_full_log_line_regex
+            re.compile(
+                r'\s\s*(?P<CurrentNode>\d+)\s+(?P<RemainingNodes>\d+)\s+(?P<Obj>{0})\s+(?P<Depth>\d+)'
+                r'\s+(?P<IntInf>\d+)\s+(?P<Incumbent>({0}|-))\s+(?P<BestBd>{0})\s+(?P<Gap>(-|{0}%))'
+                r'\s+(?P<ItPerNode>({0}|-))\s+(?P<Time>\d+)s'.format(
+                    float_pattern
+                )
+            ),
+            # tree_search_nodepruned_line_regex
+            re.compile(
+                r'\s\s*(?P<CurrentNode>\d+)\s+(?P<RemainingNodes>\d+)\s+(?P<Pruned>(cutoff|infeasible|postponed))'
+                r'\s+(?P<Depth>\d+)\s+(?P<Incumbent>(-|{0}))\s+(?P<BestBd>{0})\s+(?P<Gap>(-|{0}%))'
+                r'\s+(?P<ItPerNode>({0}|-))\s+(?P<Time>\d+)s'.format(
+                    float_pattern
+                )
+            ),
+            # tree_search_new_solution_heuristic_log_line_regex
+            re.compile(
+                r'(?P<NewSolution>H)\s*(?P<CurrentNode>\d+)\s+(?P<RemainingNodes>\d+)\s+(?P<Incumbent>({0}|-))'
+                r'\s+(?P<BestBd>{0})\s+(?P<Gap>{0}%)\s+(?P<ItPerNode>(-|{0}))\s+(?P<Time>\d+)s'.format(
+                    float_pattern
+                )
+            ),
+            # tree_search_new_solution_branching_log_line_regex
+            re.compile(
+                r'(?P<NewSolution>\*)\s*(?P<CurrentNode>\d+)\s+(?P<RemainingNodes>\d+)\s+(?P<Depth>\d+)'
+                r'\s+(?P<Incumbent>({0}|-))\s+(?P<BestBd>{0})\s+(?P<Gap>{0}%)\s+(?P<ItPerNode>({0}|-))'
+                r'\s+(?P<Time>\d+)s'.format(
+                    float_pattern
+                )
+            ),
+        ]
+        last_iter_index = text.rfind('Expl')
+        if last_iter_index:
+            text = text[last_iter_index:].split('\n,')
+            for line in text:
+                for regex in line_types:
+                    match = re.match(regex, line)
+                    if match:
+                        progress.append(typeconvert_groupdict(match))
+                        break
+            return pd.DataFrame(progress)
+        else:
+            return None
 
     def _add_record(self, instance, model, total_time, ub, lb, gap, presolve_time, root_node_time, initial_rows,
                     initial_columns, presolved_rows, presolved_columns):
