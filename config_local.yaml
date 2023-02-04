@@ -1,6 +1,0 @@
-model_name: 'coloring'
-mip_gap: 0
-time_limit: 3600
-
-input_files: ['jean.col', 'anna.col']
-output_files: ['jean.sol', 'anna.sol']
