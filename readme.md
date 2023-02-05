@@ -28,7 +28,7 @@ grblogtools` is not available for Anaconda Python 3.6.
 
 - [ ] Restructure and refactor.
 
-- [ ] Add functionality to draw the convergence plot (based on Gurobi log).
+- [X] Add functionality to draw the convergence plot (based on Gurobi log).
 
 
 ## Reference
