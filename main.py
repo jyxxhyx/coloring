@@ -22,6 +22,10 @@ def main():
             instance_key = f'{model_name}_{input_file}'
             config['model_name'] = instance_key
             output_name = f'{model_name}_{output_file}'
+            # JIC you encountered the Gurobi error of writing log (on Windows platform),
+            # change the log file to the default gurobi.log.
+            # The code is still able to parse the log correctly.
+            # log_file = 'gurobi.log'
             log_file = add_logs_cwd(f'{instance_key}.log')
             config['log_file'] = log_file
             model = Model(graph, config, upper_bound=upper_bound, lower_bound=lower_bound)
