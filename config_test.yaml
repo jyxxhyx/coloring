@@ -1,0 +1,12 @@
+is_ub_added: True
+# 'exact' will call the exact method,
+# 'greedy' wil call the greedy method, otherwise no lb info is returned.
+is_lb_added: 'exact'
+
+model_name: 'coloring'
+mip_gap: 0
+time_limit: 30
+
+input_files: [ 'miles1000.col']
+
+parse_iter: True

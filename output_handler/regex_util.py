@@ -31,3 +31,11 @@ def convert_data_types(value):
 def typeconvert_groupdict(match):
     """Return the groupdict of a regex match with type converted values."""
     return {k: convert_data_types(v) for k, v in match.groupdict().items()}
+
+
+def get_last_occurrence(text, word):
+    last_iter_index = text.rfind(word)
+    if last_iter_index:
+        return text[last_iter_index:]
+    else:
+        return None

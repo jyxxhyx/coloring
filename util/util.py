@@ -16,5 +16,5 @@ def add_logs_cwd(file_name):
     return os.path.join(BASE_PATH, 'data', 'logs', file_name)
 
 
-def add_fig_cwd(file_name):
-    return os.path.join(BASE_PATH, 'data', 'logs', file_name)
+def add_figure_cwd(file_name):
+    return os.path.join(BASE_PATH, 'data', 'figure', file_name)

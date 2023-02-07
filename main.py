@@ -7,7 +7,7 @@ from config_env import get_configuration
 
 
 def main():
-    config = get_configuration('config_large.yaml')
+    config = get_configuration('config_test.yaml')
     analyzer = Analyzer()
     # Solve multiple instances
     for input_file in config['input_files']:
@@ -25,7 +25,8 @@ def main():
             model = Model(graph, config, upper_bound=upper_bound, lower_bound=lower_bound)
             result = model.solve()
             write_result(add_output_cwd(output_name), result)
-            analyzer.parse_log(add_logs_cwd(f'{instance_key}.log'), model=model_name, instance=input_file)
+            analyzer.parse_log(add_logs_cwd(f'{instance_key}.log'), model=model_name, instance=input_file,
+                               is_iteration_parsed=config.get('parse_iter', None))
     analyzer.write_summary()
     return
 
@@ -49,4 +50,3 @@ def _get_upper_bound(graph, ub_config):
 
 if __name__ == '__main__':
     main()
-

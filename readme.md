@@ -22,13 +22,17 @@ This project depends on the [Gurobi solver](https://gurobi.com/) and [Networkx](
 - [X] Automatically analyze the Gurobi logs (via implementing a parser) and output the stat file. The official package `
 grblogtools` is not available for Anaconda Python 3.6.
 
+- [X] Add functionality to draw the convergence plot (based on Gurobi log).
+
 - [ ] Use the initial solution of the heuristic coloring method as a warm start of MILP models.
+
+- [ ] If the upper bound equals the lower bound, turn off the preprocessing to save the solution time.
 
 - [ ] Avoid defining redundant variables (i.e., g_{v, H}) in the POP and POPH models.
 
-- [ ] Restructure and refactor.
+- [ ] Restructure and refactor (WIP).
 
-- [X] Add functionality to draw the convergence plot (based on Gurobi log).
+
 
 
 ## Reference

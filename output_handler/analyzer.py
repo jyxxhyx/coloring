@@ -4,8 +4,8 @@ from typing import Optional
 import pandas as pd
 
 from output_handler.plot import draw_iteration
-from output_handler.regex_util import typeconvert_groupdict
-from util.util import add_output_cwd, add_fig_cwd
+from output_handler.regex_util import typeconvert_groupdict, get_last_occurrence
+from util.util import add_output_cwd, add_figure_cwd
 
 float_pattern = r"[-+]?((\d*\.\d+)|(\d+\.?))([Ee][+-]?\d+)?"
 
@@ -37,7 +37,8 @@ class Analyzer(object):
             presolve_time, presolved_columns, presolved_rows = self._get_presolve_info(text)
             if is_iteration_parsed:
                 df_iteration = self._get_iteration_info(text)
-                draw_iteration(df_iteration, file_name=add_fig_cwd(f'{model}_{instance}.jpg'))
+                if not df_iteration.empty:
+                    draw_iteration(df_iteration, file_name=add_figure_cwd(f'{model}_{instance}.jpg'))
 
             self._add_record(instance, model, total_time, ub, lb, gap, presolve_time, root_node_time, initial_rows,
                              initial_columns, presolved_rows, presolved_columns)
@@ -143,18 +144,22 @@ class Analyzer(object):
                 )
             ),
         ]
-        last_iter_index = text.rfind('Expl')
-        if last_iter_index:
-            text = text[last_iter_index:].split('\n,')
+        text = get_last_occurrence(text, 'Expl ')
+        if text:
+            text = text.split('\n,')
             for line in text:
-                for regex in line_types:
-                    match = re.match(regex, line)
-                    if match:
-                        progress.append(typeconvert_groupdict(match))
-                        break
+                progress = self.match_line_type(line, line_types, progress)
             return pd.DataFrame(progress)
         else:
             return None
+
+    def match_line_type(self, line, line_types, progress):
+        for regex in line_types:
+            match = re.match(regex, line)
+            if match:
+                progress.append(typeconvert_groupdict(match))
+                break
+        return progress
 
     def _add_record(self, instance, model, total_time, ub, lb, gap, presolve_time, root_node_time, initial_rows,
                     initial_columns, presolved_rows, presolved_columns):

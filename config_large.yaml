@@ -11,3 +11,5 @@ input_files: [ 'miles1000.col', 'miles1500.col', 'fpsol2.i.1.col', 'fpsol2.i.2.c
                'inithx.i.2.col', 'inithx.i.3.col', 'myciel3.col', 'myciel4.col', 'myciel5.col', 'myciel6.col',
                'myciel7.col', 'le450_15b.col', 'le450_15c.col', 'le450_15d.col', 'zeroin.i.1.col', 'zeroin.i.2.col',
                'zeroin.i.3.col' ]
+
+parse_iter: False

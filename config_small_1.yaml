@@ -1,7 +1,7 @@
-is_ub_added: True
+is_ub_added: False
 # 'exact' will call the exact method,
 # 'greedy' wil call the greedy method, otherwise no lb info is returned.
-is_lb_added: 'exact'
+is_lb_added: None
 
 # Will be changed in the calculation.
 model_name: 'coloring'
