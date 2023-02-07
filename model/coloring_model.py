@@ -10,6 +10,7 @@ class ColoringModel(AbstractModel):
         self.graph = graph
         self.config = config
         self.name = config['model_name']
+        self.log_file = config['log_file']
         self.m = Model(self.name)
         if upper_bound is None:
             self.upper_bound = len(self.graph.get_nodes())
@@ -37,7 +38,7 @@ class ColoringModel(AbstractModel):
 
     def _optimize(self):
         # Print the name of the model in the log for further analysis.
-        self.m.Params.log_file = f'{add_logs_cwd(self.name)}.log'
+        self.m.Params.log_file = self.log_file
         self.m.message('')
         self.m.message(self.name)
         self.m.Params.mip_gap = self.config['mip_gap']

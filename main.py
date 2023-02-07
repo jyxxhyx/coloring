@@ -22,10 +22,12 @@ def main():
             instance_key = f'{model_name}_{input_file}'
             config['model_name'] = instance_key
             output_name = f'{model_name}_{output_file}'
+            log_file = add_logs_cwd(f'{instance_key}.log')
+            config['log_file'] = log_file
             model = Model(graph, config, upper_bound=upper_bound, lower_bound=lower_bound)
             result = model.solve()
             write_result(add_output_cwd(output_name), result)
-            analyzer.parse_log(add_logs_cwd(f'{instance_key}.log'), model=model_name, instance=input_file,
+            analyzer.parse_log(log_file, model=model_name, instance=input_file,
                                is_iteration_parsed=config.get('parse_iter', None))
     analyzer.write_summary()
     return
