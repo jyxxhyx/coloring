@@ -5,8 +5,9 @@ is_lb_added: 'exact'
 
 model_name: 'coloring'
 mip_gap: 0
-time_limit: 30
+time_limit: 7200
 
-input_files: [ 'miles1000.col']
+#input_files: [ 'myciel6.col', 'myciel7.col', 'le450_15b.col', 'le450_15c.col', 'le450_15d.col']
+input_files: [ 'le450_15b.col' ]
 
 parse_iter: True

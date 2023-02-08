@@ -1,7 +1,7 @@
 import re
 from unittest import TestCase
 
-from output_handler.analyzer import Analyzer
+from output_handler.analyzer import GurobiAnalyzer
 from util.util import add_logs_cwd
 
 
@@ -11,7 +11,7 @@ class TestAnalyzer(TestCase):
         The fixture equivalent in unittest package
         :return:
         """
-        self.analyzer = Analyzer()
+        self.analyzer = GurobiAnalyzer()
         return
 
     def test_parse_log(self):

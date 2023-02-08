@@ -10,11 +10,12 @@ from util.util import add_output_cwd, add_figure_cwd
 float_pattern = r"[-+]?((\d*\.\d+)|(\d+\.?))([Ee][+-]?\d+)?"
 
 
-class Analyzer(object):
-    def __init__(self):
+class GurobiAnalyzer(object):
+    def __init__(self, file_name):
         columns = ['Instance', 'Model', 'Time', 'UB', 'LB', 'Gap', 'Presolve time', 'Root node time', 'Initial rows',
                    'Initial columns', 'Presolved rows', 'Presolved columns']
         self.result = {column: list() for column in columns}
+        self.file_name = file_name
         return
 
     def parse_log(self, log_name: str, model: str, instance: str, is_iteration_parsed: bool = False):
@@ -179,5 +180,25 @@ class Analyzer(object):
 
     def write_summary(self):
         df = pd.DataFrame(self.result)
-        df.to_csv(add_output_cwd('result.csv'), index=False, encoding='utf-8-sig')
+        df.to_csv(add_output_cwd(self.file_name), index=False, encoding='utf-8-sig')
+        return
+
+
+class InstanceAnalyzer(object):
+    def __init__(self, file_name):
+        columns = ['Instance', 'Node', 'Edge', 'Upper bound', 'Lower bound']
+        self.result = {column: [] for column in columns}
+        self.file_name = file_name
+
+    def add_record(self, instance, node, edge, upper_bound, lower_bound):
+        self.result['Instance'].append(instance)
+        self.result['Node'].append(node)
+        self.result['Edge'].append(edge)
+        self.result['Upper bound'].append(upper_bound)
+        self.result['Lower bound'].append(lower_bound)
+        return
+
+    def write_summary(self):
+        df = pd.DataFrame(self.result)
+        df.to_csv(add_output_cwd(self.file_name), index=False, encoding='utf-8-sig')
         return
