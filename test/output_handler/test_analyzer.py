@@ -11,7 +11,7 @@ class TestAnalyzer(TestCase):
         The fixture equivalent in unittest package
         :return:
         """
-        self.analyzer = GurobiAnalyzer()
+        self.analyzer = GurobiAnalyzer('result.csv')
         return
 
     def test_parse_log(self):
