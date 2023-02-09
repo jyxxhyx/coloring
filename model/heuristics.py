@@ -4,24 +4,24 @@ from graph.graph import Graph
 
 
 def random_coloring(graph: Graph) -> int:
-    total_colors = 0
+    color_count = 0
     color_dict = dict()
     for node in graph.get_nodes():
         # only process node that is not colored yet
         if node in color_dict:
             continue
         neighbors = graph.get_neighborhood(node)
-        neighbor_colors = {color_dict[i] for i in neighbors if i in color_dict}
-        if len(neighbor_colors) == total_colors:
+        neighbor_colors = {color_dict[v] for v in neighbors if v in color_dict}
+        if len(neighbor_colors) == color_count:
             # Case 1. Need a new color.
-            color_dict[node] = total_colors
-            total_colors += 1
+            color_dict[node] = color_count
+            color_count += 1
         else:
             # Case 2. Use an existing color (randomly pop one).
-            set_colors = set(range(total_colors))
-            random_available_color = set_colors.difference(neighbor_colors).pop()
-            color_dict[node] = random_available_color
-    return total_colors
+            color_set = set(range(color_count))
+            available_color = color_set.difference(neighbor_colors).pop()
+            color_dict[node] = available_color
+    return color_count
 
 
 def find_clique(graph: Graph) -> Tuple[int, list]:
