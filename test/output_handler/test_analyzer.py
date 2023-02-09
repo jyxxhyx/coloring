@@ -35,16 +35,22 @@ class TestAnalyzer(TestCase):
         text = 'Presolve time: 47.68s\n,Presolved: 517637 rows, 18157 columns, 1581126 nonzeros'
         result = self.analyzer._get_presolve_info(text)
         print(result)
+        self.assertAlmostEqual(result[0], 47.68)
+        self.assertEqual(result[1], 18157)
+        self.assertEqual(result[2], 517637)
 
     def test_re(self):
         text = 'Best objective 9.000000000000e+00, best bound 9.000000000000e+00, gap 0.0000%, Best objective ' \
                '8.000000000000e+00, best bound 7.000000000000e+00, gap 1.0000%'
         obj_pattern = r'Best objective (\d+\.\d+e\+\d+), best bound (\d+\.\d+e\+\d+), gap (\d+\.\d+)\%'
         m = re.findall(obj_pattern, text)[-1]
-        ub = m[0]
-        lb = m[1]
-        gap = m[2]
+        ub = float(m[0])
+        lb = float(m[1])
+        gap = float(m[2])
         print(f'{ub},{lb},{gap}')
+        self.assertAlmostEqual(ub, 8.0)
+        self.assertAlmostEqual(lb, 7.0)
+        self.assertAlmostEqual(gap, 1.0)
 
     def test__get_iteration_info(self):
         text = ' Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time\n,\n,' \
@@ -52,3 +58,5 @@ class TestAnalyzer(TestCase):
                '     0     0    9.00000    0  155    9.00000    9.00000  0.00%     -    0s\n,'
         result = self.analyzer._get_iteration_info(text)
         print(result)
+        self.assertEqual(len(result), 2)
+        self.assertAlmostEqual(result.at[1, 'IntInf'], 155.0)
