@@ -34,8 +34,8 @@ class GurobiAnalyzer(object):
             gap, lb, ub = self._get_obj_info(text)
             total_time = self._get_total_time(text)
             root_node_time = self._get_root_node(text)
-            initial_columns, initial_rows = self._get_initial_size(text)
-            presolve_time, presolved_columns, presolved_rows = self._get_presolve_info(text)
+            initial_rows, initial_columns = self._get_initial_size(text)
+            presolve_time, presolved_rows, presolved_columns = self._get_presolve_info(text)
             if is_iteration_parsed:
                 df_iteration = self._get_iteration_info(text)
                 if not df_iteration.empty:
@@ -69,14 +69,14 @@ class GurobiAnalyzer(object):
         presolve_time = float(m[0])
         presolved_rows = int(m[1])
         presolved_columns = int(m[2])
-        return presolve_time, presolved_columns, presolved_rows
+        return presolve_time,  presolved_rows, presolved_columns
 
     def _get_initial_size(self, text):
         initial_prob_pattern = r'Optimize a model with (\d+) rows, (\d+) columns and (\d+) nonzeros'
         m = re.findall(initial_prob_pattern, text)[-1]
         initial_rows = int(m[0])
         initial_columns = int(m[1])
-        return initial_columns, initial_rows
+        return initial_rows, initial_columns
 
     def _get_root_node(self, text):
         root_node_pattern = r'Root relaxation: objective (\d+\.\d+e\+\d+), (\d+) iterations, (\d+\.\d+) seconds'

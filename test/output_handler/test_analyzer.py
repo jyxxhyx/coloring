@@ -36,8 +36,8 @@ class TestAnalyzer(TestCase):
         result = self.analyzer._get_presolve_info(text)
         print(result)
         self.assertAlmostEqual(result[0], 47.68)
-        self.assertEqual(result[1], 18157)
-        self.assertEqual(result[2], 517637)
+        self.assertEqual(result[1], 517637)
+        self.assertEqual(result[2], 18157)
 
     def test_re(self):
         text = 'Best objective 9.000000000000e+00, best bound 9.000000000000e+00, gap 0.0000%, Best objective ' \
