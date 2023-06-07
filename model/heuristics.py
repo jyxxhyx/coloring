@@ -1,26 +1,40 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 from graph.graph import Graph
 
 
-def random_coloring(graph: Graph) -> int:
+def random_coloring(graph: Graph, capacity: Optional[int] = None) -> int:
     color_count = 0
-    color_dict = dict()
+    # To store each node's color
+    node_color_dict = dict()
+    # To store each color's occurrence
+    color_counter = dict()
     for node in graph.get_nodes():
         # only process node that is not colored yet
-        if node in color_dict:
+        if node in node_color_dict:
             continue
         neighbors = graph.get_neighborhood(node)
-        neighbor_colors = {color_dict[v] for v in neighbors if v in color_dict}
+        neighbor_colors = {node_color_dict[v] for v in neighbors if v in node_color_dict}
         if len(neighbor_colors) == color_count:
-            # Case 1. Need a new color.
-            color_dict[node] = color_count
+            # Case 1. Need a new color (because the node has all existing colors in the neighborhood)
+            node_color_dict[node] = color_count
+            color_counter[color_count] = 1
             color_count += 1
         else:
-            # Case 2. Use an existing color (randomly pop one).
+            # Case 2. Use an existing color if the capacity constraint is satisfied.
             color_set = set(range(color_count))
-            available_color = color_set.difference(neighbor_colors).pop()
-            color_dict[node] = available_color
+            available_colors = color_set.difference(neighbor_colors)
+            if capacity is not None:
+                available_colors = {color for color in available_colors if color_counter[color] < capacity}
+            if len(available_colors) > 0:
+                available_color = available_colors.pop()
+                node_color_dict[node] = available_color
+                color_counter[available_color] += 1
+            else:
+                # Case 3. Need a new color.
+                node_color_dict[node] = color_count
+                color_counter[color_count] = 1
+                color_count += 1
     return color_count
 
 

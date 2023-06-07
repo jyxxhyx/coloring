@@ -20,3 +20,8 @@ class Test(TestCase):
         num_color = random_coloring(self.graph)
         print(f'Coloring is: {num_color}')
         self.assertEqual(num_color, 10)
+
+    def test_random_coloring_with_capacity(self):
+        capacity = 3
+        num_color = random_coloring(self.graph, capacity)
+        print(f'Coloring with capacity {capacity} is: {num_color}')
